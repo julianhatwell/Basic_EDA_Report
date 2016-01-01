@@ -1,0 +1,2 @@
+<<splom, fig.cap='multi-variate comparisons'>>=
+@

@@ -1,0 +1,79 @@
+<<setup, child='basic_overview_template_setup.Rnw'>>=
+@
+
+<<this_data_set, include=FALSE>>=
+lb <- "faraway"
+library(lb, character.only = TRUE)
+ds <- "teengamb"
+df <- get(ds)
+
+# determine the response variables
+y <- "gamble"
+@
+
+\documentclass{article}
+\begin{document}
+\title{Overview of 
+\Sexpr{paste0("``",ds, "''")} 
+Dataset from 
+\Sexpr{paste0("``", lb, "''")}
+Package}
+\author{Julian Hatwell}
+\maketitle
+
+This document provides a brief overview of the
+\Sexpr{ds} dataset in the 
+\Sexpr{lb} R package.
+
+<<data_summary>>=
+summary(df)
+@
+
+From the summary, and the associated help (not shown, the following observations can be made:
+
+The dataframe contains 
+\Sexpr{nrow(df)} 
+rows and 
+\Sexpr{ncol(df)}
+columns. 
+
+<<tidy_data>>=
+# Sex has been coded as integer values 0 and 1. 40\% of the observations are female.
+
+# Parents socioeconomic status is likely to be a percentage ranging between 18 and 75.
+
+# Verbal may be an indicator of education with discrete levels 1 - 10 (maximum of possible 12 indicated in the help).
+
+# There don't appear to be any missing values. Where zeros appear, they seem to be reasonable values.
+
+# set factors correctly
+df <- mutate(df
+             , sex = factor(sex
+                      , labels = c("male"
+                                ,  "female"))
+             , verbal = factor(verbal, levels = 1:12)
+)
+@
+
+<<enum_cols, child='basic_overview_template_enumcols.Rnw'>>=
+@
+
+<<histograms, child='basic_overview_template_hists.Rnw', opts.label='fig.wide'>>=
+@
+
+<<bwplots, child='basic_overview_template_bwplots.Rnw', opts.label='fig.norm'>>=
+@
+
+<<splom, child='basic_overview_template_splom.Rnw', opts.label='fig.norm'>>=
+@
+
+<<corrgram, child='basic_overview_template_corrgram.Rnw', opts.label='fig.norm'>>=
+@
+
+<<ttests, child='basic_overview_template_ttests.Rnw'>>=
+@
+
+<<tidy_data, echo=TRUE, eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff = 40)>>=
+@
+
+\end{document}

@@ -1,0 +1,24 @@
+<<enum_cols>>=
+cols <- colnames(df)
+n <- length(cols)
+coltype <- character(n)
+for (i in 1:n) {
+  if (is.numeric(df[[cols[i]]])) {
+    coltype[i] <- "numeric"
+  } else {
+      coltype[i] <- class(df[[cols[i]]])
+  }
+}
+
+# other variables
+num_vars <- cols[coltype == "numeric"]
+fac_vars <- cols[coltype == "factor"]
+if (!is.na(fac_vars[1])) {
+  m <- length(fac_vars)
+  fac_levs <- integer(m)
+  for (i in 1:m) {
+    fac_levs[i] <- 
+      length(levels(df[[fac_vars[i]]]))
+  }
+}
+@

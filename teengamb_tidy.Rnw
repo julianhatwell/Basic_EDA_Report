@@ -1,0 +1,17 @@
+<<tidy_data>>=
+# Sex has been coded as integer values 0 and 1. 40% of the observations are female.
+
+# Parents socioeconomic status is likely to be a percentage ranging between 18 and 75.
+
+# Verbal may be an indicator of education with discrete levels 1 - 10 (maximum of possible 12 indicated in the help).
+
+# There don't appear to be any missing values. Where zeros appear, they seem to be reasonable values.
+
+# set factors correctly
+df <- mutate(df
+             , sex = factor(sex
+                      , labels = c("male"
+                                ,  "female"))
+             , verbal = factor(verbal, levels = 1:12)
+)
+@

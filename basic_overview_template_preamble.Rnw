@@ -1,0 +1,15 @@
+\documentclass{article}
+
+\begin{document}
+
+\title{Overview of 
+\Sexpr{paste0("``",ds, "''")} 
+Dataset from 
+\Sexpr{paste0("``", lb, "''")}
+Package}
+\author{Julian Hatwell}
+\maketitle
+
+
+
+\end{document}

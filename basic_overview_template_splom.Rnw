@@ -1,0 +1,7 @@
+<<splom, fig.cap='multi-variate comparisons'>>=
+splom(~df
+      , pscales = 0
+      , alpha = 0.5 
+      , type = c("p","smooth")
+      , main = paste("Scatter Plot Matrix of", ds))
+@

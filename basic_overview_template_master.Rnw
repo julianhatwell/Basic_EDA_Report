@@ -1,0 +1,71 @@
+<<prologue, include=FALSE>>=
+specific_report <- "teengamb"
+
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE)
+@
+
+<<dataset, child=paste0(specific_report, "_this.Rnw")>>=
+@
+
+<<setup, child='basic_overview_template_setup.Rnw'>>=
+@
+
+\documentclass{article}
+\begin{document}
+\title{Overview of 
+\Sexpr{paste0("``",ds, "''")} 
+Dataset from 
+\Sexpr{paste0("``", lb, "''")}
+Package}
+\author{Julian Hatwell}
+\maketitle
+
+This document provides a brief overview of the
+\Sexpr{ds} dataset in the 
+\Sexpr{lb} R package.
+
+<<data_summary>>=
+summary(df)
+@
+
+From the summary, and the associated help (not shown), the following observations can be made:
+\newline
+
+The dataframe contains 
+\Sexpr{nrow(df)} 
+rows and 
+\Sexpr{ncol(df)}
+columns. 
+
+\newpage
+
+<<tidy_data, child=paste0(specific_report,  "_tidy.Rnw")>>=
+@
+
+<<custom, child=paste0(specific_report,  "_custom.Rnw")>>=
+@
+
+<<enum_cols, child='basic_overview_template_enumcols.Rnw'>>=
+@
+
+<<histograms, eval=basic_hists, child='basic_overview_template_hists.Rnw', opts.label='fig.wide'>>=
+@
+
+<<bwplots, eval=basic_bwplots, child='basic_overview_template_bwplots.Rnw', opts.label='fig.norm'>>=
+@
+
+<<splom, eval=basic_splom, child='basic_overview_template_splom.Rnw', opts.label='fig.norm'>>=
+@
+
+<<corrgram, eval=basic_corrgram, child='basic_overview_template_corrgram.Rnw', opts.label='fig.norm'>>=
+@
+
+<<ttests, eval=basic_ttests, child='basic_overview_template_ttests.Rnw'>>=
+@
+
+<<tidy_data, echo=TRUE, eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff = 40)>>=
+@
+
+\end{document}

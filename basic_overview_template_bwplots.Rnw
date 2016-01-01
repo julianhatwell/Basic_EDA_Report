@@ -1,0 +1,37 @@
+<<create_bwplot_objects, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by", fac_vars)>>=
+b <- list()
+
+for (var in fac_vars) {
+b[[var]] <- bwplot(df[[y]]~df[[var]]
+            , xlab = var
+            , ylab = y)
+}
+@
+
+<<plot_objects>>=
+layouts <- list(
+  list()
+  , list(c(0, 0, 0.55, 1),c(0.55, 0, 1, 1))
+  , list()
+  , list(c(0,0,0.32,1), c(0.25,0,0.548,1), c(0.5,0,0.798,1), c(0.75,0,1,1))
+)
+
+oneSideScale <- list(y = list(tck = c(1, 0)))
+silentScale <- list(y = list(draw = FALSE))
+
+n <- length(b)
+for (i in 1:n) {
+  print(
+    if (i == 1) { 
+      update(b[[i]], scales = oneSideScale)
+    } else {
+        update(b[[i]], scales = silentScale, ylab = NULL)
+    }
+  , pos = layouts[[n]][[i]]
+  , more = !(i == n)
+  )
+}
+# print(sm, pos = c(0.25,0,0.548,1), more = TRUE)
+# print(re, pos = c(0.5,0,0.798,1), more = TRUE)
+# print (ho, pos = c(0.75,0,1,1))
+@

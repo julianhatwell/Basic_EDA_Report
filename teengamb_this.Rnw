@@ -1,0 +1,10 @@
+<<this_data_set>>=
+# library/package
+lb <- "faraway"
+
+# dataset
+ds <- "teengamb"
+
+# determine the response variables
+y <- "gamble"
+@

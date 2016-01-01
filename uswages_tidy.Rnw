@@ -1,0 +1,22 @@
+<<tidy_data>>=
+# The region of origin has been coded in an unwieldy way and should be collapsed into a single column.
+
+# The individual with the second highest way has zero years education. 
+# Zero years education or even low integers values would require verification at the source. # There are 40 individuals with educ <= 5, so it may be valid.
+
+# 33 individuals have negative exper. This cannot be valid.
+
+df <- df %>% 
+  gather(region, one, ne, mw, we, so) %>%
+  filter(one > 0) %>%
+  mutate(race = factor(race, labels = c("white"
+                                , "black"))
+         , smsa = factor(smsa
+                , labels = c("not in smsa"
+                             , "in smsa"))
+         , hours = factor(pt
+                , labels = c("full time"
+                             , "part time"))
+         , exper = ifelse(exper < 0, NA, exper)) %>%
+  select(wage, educ, exper, race, smsa, region, hours)
+@

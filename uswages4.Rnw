@@ -1,0 +1,92 @@
+<<setup, child='basic_overview_template_setup.Rnw'>>=
+@
+
+<<this_data_set, include=FALSE>>=
+lb <- "faraway"
+library(lb, character.only = TRUE)
+ds <- "uswages"
+df <- get(ds)
+
+# determine the response variables
+y <- "wage"
+@
+
+\documentclass{article}
+
+\begin{document}
+
+\title{Overview of 
+\Sexpr{paste0("``",ds, "''")} 
+Dataset from 
+\Sexpr{paste0("``", lb, "''")}
+Package}
+\author{Julian Hatwell}
+\maketitle
+
+This document provides a brief overview of the
+\Sexpr{ds} dataset in the 
+\Sexpr{lb} R package.
+
+<<data_summary>>=
+summary(df)
+@
+
+From the summary, and the associated help (not shown, the following observations can be made:
+
+The dataframe contains 
+\Sexpr{nrow(df)} 
+rows and 
+\Sexpr{ncol(df)}
+columns. 
+
+<<tidy_data>>=
+# The region of origin has been coded in an unwieldy way and should be collapsed into a single column.
+
+# The individual with the second highest way has zero years education. 
+# Zero years education or even low integers values would require verification at the source. # There are 40 individuals with educ <= 5, so it may be valid.
+
+# 33 individuals have negative exper. This cannot be valid.
+
+df <- df %>% 
+  gather(region, one, ne, mw, we, so) %>%
+  filter(one > 0) %>%
+  mutate(race = factor(race, labels = c("white"
+                                , "black"))
+         , smsa = factor(smsa
+                , labels = c("not in smsa"
+                             , "in smsa"))
+         , hours = factor(pt
+                , labels = c("full time"
+                             , "part time"))
+         , exper = ifelse(exper < 0, NA, exper)) %>%
+  select(wage, educ, exper, race, smsa, region, hours)
+@
+
+<<enum_cols, child='basic_overview_template_enumcols.Rnw'>>=
+@
+
+<<histograms, child='basic_overview_template_hists.Rnw', opts.label='fig.wide'>>=
+@
+
+<<bwplots, child='basic_overview_template_bwplots.Rnw', opts.label='fig.norm'>>=
+@
+
+<<splom, fig.cap='multi-variate comparisons'>>=
+# replaced basic splom
+splom(~select(df, wage, educ, exper)
+      , pscales = 0
+      , alpha = 0.5, type = c("p", "smooth")
+      , main = paste("Scatter Plot Matrix of", ds)
+      )
+@
+
+<<corrgram, child='basic_overview_template_corrgram.Rnw', opts.label='fig.norm'>>=
+@
+
+<<ttests, child='basic_overview_template_ttests.Rnw'>>=
+@
+
+<<tidy_data, echo=TRUE, eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff = 40)>>=
+@
+
+\end{document}

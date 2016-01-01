@@ -1,0 +1,128 @@
+<<setup, include=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE
+                      , fig.height = 7
+                      , fig.width = 7
+                      , fig.align = "center"
+                      )
+
+library(lattice)
+library(dplyr)
+library(tidyr)
+library(corrgram)
+
+# this data set
+lb <- "faraway"
+library(lb, character.only = TRUE)
+ds <- "prostate"
+df <- get(ds)
+
+# determine the response variables
+y <- "lcavol"
+@
+
+\documentclass{article}
+\begin{document}
+\title{Overview of 
+\Sexpr{paste0("``",ds, "''")} 
+Dataset from 
+\Sexpr{paste0("``", lb, "''")}
+Package}
+\author{Julian Hatwell}
+\maketitle
+
+This document provides a brief overview of the
+\Sexpr{ds} dataset in the 
+\Sexpr{lb} R package.
+
+<<data_summary>>=
+summary(df)
+@
+
+From the summary, and the associated help (not shown, the following observations can be made:
+
+The dataframe contains 
+\Sexpr{nrow(df)} 
+rows and 
+\Sexpr{ncol(df)}
+columns. 
+
+<<tidy_data>>=
+# carry out any required transformations for tidy data standardisation, e.g. set factors correctly
+df <- mutate(df
+             , svi = factor(svi
+                      , labels = c("no"
+                                ,  "yes"))
+             , gleason = factor(gleason)
+)
+@
+
+<<enum_cols>>=
+cols <- colnames(df)
+n <- length(cols)
+coltype <- character(n)
+for (i in 1:n) {
+  if (is.numeric(df[[cols[i]]])) {
+    coltype[i] <- "numeric"
+  } else {
+      coltype[i] <- class(df[[cols[i]]])
+  }
+}
+
+# other variables
+num_vars <- cols[coltype == "numeric"]
+fac_vars <- cols[coltype == "factor"]
+if (!is.na(fac_vars[1])) {
+  m <- length(fac_vars)
+  fac_levs <- integer(m)
+  for (i in 1:m) {
+    fac_levs[i] <- 
+      length(levels(df[[fac_vars[i]]]))
+  }
+}
+@
+
+<<histograms, eval=!is.na(num_vars[1]) ,fig.cap=paste("Histogram of the", num_vars, "variable")>>=
+for (var in num_vars) {
+h <- histogram(~df[[var]], breaks=15, xlab = var)
+print(h)
+}
+@
+
+<<bwplots, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by", fac_vars)>>=
+for (var in fac_vars) {
+b <- bwplot(df[[y]]~df[[var]]
+            , xlab = var
+            , ylab = y)
+print(b)
+}
+@
+
+<<splom, fig.cap='multi-variate comparisons'>>=
+splom(~df
+      , pscales = 0
+      , alpha = 0.5, type = c("p","smooth")
+      , main = paste("Scatter Plot Matrix of", ds))
+
+corrgram(df, order=TRUE
+        , lower.panel=panel.pie
+        , upper.panel=panel.ellipse
+        , text.panel=panel.txt
+        , dir = "right"
+        , main = paste("Correlogram of", ds)
+      )
+@
+
+<<t_tests_2_level_factors, eval=!is.na(fac_vars[1])>>=
+for (var in fac_vars[fac_levs == 2]) {
+    t <- t.test(df[[y]]~df[[var]])
+    t$data.name <- paste(y, "by", var)
+    print(t)
+}
+@
+
+<<tidy_data, echo=TRUE, eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff = 40)>>=
+@
+
+\end{document}

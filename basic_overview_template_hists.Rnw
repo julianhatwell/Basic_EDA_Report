@@ -1,0 +1,6 @@
+<<histograms, eval=!is.na(num_vars[1]) ,fig.cap=paste("Histogram of the", num_vars, "variable")>>=
+for (var in num_vars) {
+h <- histogram(~df[[var]], breaks=15, xlab = var)
+print(h)
+}
+@

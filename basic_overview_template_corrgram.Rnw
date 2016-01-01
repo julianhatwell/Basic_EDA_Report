@@ -1,0 +1,9 @@
+<<corrgram, fig.cap='multi-variate comparisons'>>=
+corrgram(df, order=TRUE
+        , lower.panel=panel.pie
+        , upper.panel=panel.ellipse
+        , text.panel=panel.txt
+        , dir = "right"
+        , main = paste("Correlogram of", ds)
+      )
+@
