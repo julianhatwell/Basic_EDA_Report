@@ -16,7 +16,7 @@ Replace the string dataframe with a unique name for your dataframe.
 Use the examples included here, and these guidelines to set up the report:
 
 #### dataframe_this
-Just add the package name, dataframe name and the name of the dependent variable (y).
+Just add the package name, dataframe name and the name of the dependent variable (y). Check the examples to see how.
 
 #### dataframe_tidy
 Do any operations here to create a standard, tidy dataframe. This is useful if you are loading a dataframe from a package and it doesn't ship the way you like it. If it needs any code running to clean it up then do that here. Don't change the generic label "df" used here as the rest of the code refers to this.
