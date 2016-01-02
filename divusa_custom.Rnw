@@ -1,9 +1,9 @@
-<<corrgram_custom, fig.cap='Correlogram'>>=
+<<corrgram_custom, fig.cap='multi-variate comparisons'>>=
 # replace basic corrgram as the time series doesn't play nicely
 basic_corrgram <- FALSE
 
 # change the ts back to a numeric
-corrgram(mutate(df, verbal = as.integer(verbal))
+corrgram(mutate(df, year = as.integer(year))
         , order=TRUE
         , lower.panel=panel.pie
         , upper.panel=panel.ellipse

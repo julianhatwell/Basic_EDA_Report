@@ -3,7 +3,8 @@ cols <- colnames(df)
 n <- length(cols)
 coltype <- character(n)
 for (i in 1:n) {
-  if (is.numeric(df[[cols[i]]])) {
+  if (is.numeric(df[[cols[i]]]) & 
+      class(df[[cols[i]]]) != "ts") {
     coltype[i] <- "numeric"
   } else {
       coltype[i] <- class(df[[cols[i]]])
@@ -13,6 +14,7 @@ for (i in 1:n) {
 # other variables
 num_vars <- cols[coltype == "numeric"]
 fac_vars <- cols[coltype == "factor"]
+ts_vars <- cols[coltype == "ts"]
 if (!is.na(fac_vars[1])) {
   m <- length(fac_vars)
   fac_levs <- integer(m)

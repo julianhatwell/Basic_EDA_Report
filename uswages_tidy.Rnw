@@ -1,10 +1,13 @@
 <<tidy_data>>=
-# The region of origin has been coded in an unwieldy way and should be collapsed into a single column.
+# The region of origin has been coded in an unwieldy way and so has been collapsed into a single column.
 
-# The individual with the second highest way has zero years education. 
-# Zero years education or even low integers values would require verification at the source. # There are 40 individuals with educ <= 5, so it may be valid.
+# The individual with the second highest way has zero years education.
+# Zero years education or even low integers values would require verification at the source. 
+# There are 40 individuals with educ <= 5, so it may be valid.
 
-# 33 individuals have negative exper. This cannot be valid.
+# 33 individuals have negative exper. Set these cases to NA.
+
+# There are factor variables that don't add any information to the splom and will not be included there.
 
 df <- df %>% 
   gather(region, one, ne, mw, we, so) %>%

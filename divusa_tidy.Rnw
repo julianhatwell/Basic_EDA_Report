@@ -1,0 +1,6 @@
+<<tidy_data>>=
+# Year is an integer value and should be used as a time series.
+
+df <- df %>% 
+  mutate(year = ts(year, frequency = 1))
+@

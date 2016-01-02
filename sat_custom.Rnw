@@ -1,8 +1,8 @@
-<<splom_custom, fig.cap='Correlogram'>>=
+<<splom_custom, fig.cap='multi-variate comparisons'>>=
 # replace basic splom
 basic_splom <- FALSE
 
-splom(~select(df, wage, educ, exper)
+splom(~select(df, expend, ratio, salary, takers, total)
       , pscales = 0
       , alpha = 0.5, type = c("p", "smooth")
       , main = paste("Scatter Plot Matrix of", ds)

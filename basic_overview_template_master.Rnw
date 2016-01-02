@@ -1,9 +1,10 @@
 <<prologue, include=FALSE>>=
-specific_report <- "teengamb"
+specific_report <- "divusa"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE
-                      , echo = FALSE)
+                      , echo = FALSE
+                      )
 @
 
 <<dataset, child=paste0(specific_report, "_this.Rnw")>>=
@@ -48,6 +49,9 @@ columns.
 @
 
 <<enum_cols, child='basic_overview_template_enumcols.Rnw'>>=
+@
+
+<<time_series, eval=basic_ts, child='basic_overview_template_series.Rnw', opts.label='fig.wide'>>=
 @
 
 <<histograms, eval=basic_hists, child='basic_overview_template_hists.Rnw', opts.label='fig.wide'>>=

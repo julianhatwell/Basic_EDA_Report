@@ -1,0 +1,8 @@
+<<time_series, eval=!is.na(ts_vars[1]) ,fig.cap=paste("Time Series  plot of", y, "against", ts_vars)>>=
+for (var in ts_vars) {
+s <- xyplot(df[[y]]~df[[var]]
+            , type = "l"
+            , xlab = var, ylab = y)
+print(s)
+}
+@

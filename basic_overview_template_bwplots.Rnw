@@ -1,4 +1,4 @@
-<<create_bwplot_objects, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by", fac_vars)>>=
+<<create_bwplot_objects, eval=!is.na(fac_vars[1])>>=
 b <- list()
 
 for (var in fac_vars) {
@@ -6,12 +6,13 @@ b[[var]] <- bwplot(df[[y]]~df[[var]]
             , xlab = var
             , ylab = y)
 }
+# knitr wants create a plot for each high level plot function call but I need to hold it for a better layout - plot in a seaparate chunk.
 @
 
-<<plot_objects>>=
+<<do_plotting, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by each factor variable")>>=
 layouts <- list(
   list()
-  , list(c(0, 0, 0.55, 1),c(0.55, 0, 1, 1))
+  , list(c(0, 0, 0.58, 1),c(0.51, 0, 1, 1))
   , list()
   , list(c(0,0,0.32,1), c(0.25,0,0.548,1), c(0.5,0,0.798,1), c(0.75,0,1,1))
 )
@@ -31,7 +32,4 @@ for (i in 1:n) {
   , more = !(i == n)
   )
 }
-# print(sm, pos = c(0.25,0,0.548,1), more = TRUE)
-# print(re, pos = c(0.5,0,0.798,1), more = TRUE)
-# print (ho, pos = c(0.75,0,1,1))
 @

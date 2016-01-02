@@ -1,0 +1,9 @@
+<<tidy_data>>=
+# carry out any required transformations for tidy data standardisation, e.g. set factors correctly
+df <- mutate(df
+             , svi = factor(svi
+                      , labels = c("no"
+                                ,  "yes"))
+             , gleason = factor(gleason)
+)
+@

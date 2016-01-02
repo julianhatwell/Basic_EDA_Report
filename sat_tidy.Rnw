@@ -1,0 +1,5 @@
+<<tidy_data>>=
+# Row names give the specific US State name. There are no factor variables for coding.
+
+# The math and verbal variables are highly correlated with each other and the total variable. They will not be shown in the splom.
+@

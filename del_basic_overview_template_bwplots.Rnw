@@ -1,8 +1,0 @@
-<<bwplots, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by", fac_vars)>>=
-for (var in fac_vars) {
-b <- bwplot(df[[y]]~df[[var]]
-            , xlab = var
-            , ylab = y)
-print(b)
-}
-@

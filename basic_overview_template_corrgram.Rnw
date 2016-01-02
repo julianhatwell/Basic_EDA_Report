@@ -1,4 +1,4 @@
-<<corrgram, fig.cap='multi-variate comparisons'>>=
+<<corrgram, fig.cap='Correlogram'>>=
 corrgram(df, order=TRUE
         , lower.panel=panel.pie
         , upper.panel=panel.ellipse
