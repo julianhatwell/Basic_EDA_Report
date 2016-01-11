@@ -1,5 +1,5 @@
 <<prologue, include=FALSE>>=
-specific_report <- "divusa"
+specific_report <- "uswages"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE

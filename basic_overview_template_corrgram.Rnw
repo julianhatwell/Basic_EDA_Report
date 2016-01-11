@@ -1,5 +1,5 @@
 <<corrgram, fig.cap='Correlogram'>>=
-corrgram(df, order=TRUE
+corrgram(df, order = FALSE
         , lower.panel=panel.pie
         , upper.panel=panel.ellipse
         , text.panel=panel.txt
