@@ -1,8 +1,21 @@
 <<lm_fits, eval=!is.na(num_vars[1]) >>=
-# show this damn filte
+cfs <- data.frame(row.names =  num_vars[num_vars != y])
 for (var in num_vars[num_vars != y]) {
-    lm.var <- lm(df[[y]]~df[[var]])
-    lm.var$call <- paste0("lm(formuala = ", y, "~", var, ")")
+    fmla1 <- as.formula(paste0(y, "~", var))
+    lm.var <- lm(fmla1, data = df)
+    cfs[var,1] <- lm.var$coefficients[2]
     print(summary(lm.var))
 }
+fmla <- as.formula(paste0(y, "~", paste(num_vars[num_vars!=y], collapse = "+")))
+lm.vars <- lm(fmla, data = df)
+cfs[,2] <- lm.vars$coefficients[2:(length(num_vars))]
+print(summary(lm.vars))
+
+xyplot(cfs$V1~cfs$V2, groups = row.names(cfs)
+       , cex = 1.1
+       , scales = list(tck = c(1, 0))
+       , auto.key = list(columns = floor(length(num_vars)/3))
+       , xlab = "Coefficient in single variable model"
+       , ylab = "Coefficient in multiple variable model"
+       , main = "Single vs Multivariate model parameters")
 @
