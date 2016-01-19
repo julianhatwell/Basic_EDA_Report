@@ -1,0 +1,10 @@
+<<this_data_set>>=
+# library/package
+lb <- "MASS"
+
+# dataset
+ds <- "Boston"
+
+# determine the response variables
+y <- "crim"
+@

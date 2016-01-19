@@ -20,4 +20,5 @@ basic_bwplots <- TRUE
 basic_splom <- TRUE
 basic_corrgram <- TRUE
 basic_ttests <- TRUE
+basic_lmfits <- TRUE
 @

@@ -1,4 +1,4 @@
-<<splom_custom, fig.cap='Correlogram'>>=
+<<splom_custom, fig.cap='multi-variate comparisons'>>=
 # replace basic splom
 basic_splom <- FALSE
 

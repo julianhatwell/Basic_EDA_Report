@@ -1,0 +1,8 @@
+<<lm_fits, eval=!is.na(num_vars[1]) >>=
+# show this damn filte
+for (var in num_vars[num_vars != y]) {
+    lm.var <- lm(df[[y]]~df[[var]])
+    lm.var$call <- paste0("lm(formuala = ", y, "~", var, ")")
+    print(summary(lm.var))
+}
+@

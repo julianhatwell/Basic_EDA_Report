@@ -1,5 +1,5 @@
 <<prologue, include=FALSE>>=
-specific_report <- "uswages"
+specific_report <- "Boston"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE
@@ -68,6 +68,10 @@ columns.
 
 <<ttests, eval=basic_ttests, child='basic_overview_template_ttests.Rnw'>>=
 @
+
+<<lmfits, eval=basic_lmfits, child='basic_overview_template_lmfits.Rnw'>>=
+@
+
 
 <<tidy_data, echo=TRUE, eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff = 40)>>=
 @

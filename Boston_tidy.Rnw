@@ -1,0 +1,7 @@
+<<tidy_data>>=
+# recoded these 2 vars as factors
+df <- df %>% 
+  mutate(chas = factor(chas, labels = c("not", "river bounded"))
+         , rad = factor(rad)
+         )
+@
