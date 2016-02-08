@@ -1,0 +1,8 @@
+<<tidy_data>>=
+Week <- numeric(0)
+for (yr in unique(df$Year)) {
+  Week <- c(Week, 1:table(Weekly$Year)[as.character(yr)])
+}
+df <- mutate(df, Week = Week
+             , YearWeek = ts(100 * Year + Week))
+@

@@ -1,5 +1,5 @@
 <<t_tests_2_level_factors, eval=!is.na(fac_vars[1])>>=
-for (var in fac_vars[fac_levs == 2]) {
+for (var in fac_vars[fac_vars != y & fac_levs == 2]) {
     t <- t.test(df[[y]]~df[[var]])
     t$data.name <- paste(y, "by", var)
     print(t)

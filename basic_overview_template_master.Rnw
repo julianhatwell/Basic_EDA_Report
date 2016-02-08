@@ -1,5 +1,5 @@
 <<prologue, include=FALSE>>=
-specific_report <- "Boston"
+specific_report <- "Weekly"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE

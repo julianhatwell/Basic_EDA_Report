@@ -1,17 +1,24 @@
 <<create_bwplot_objects, eval=!is.na(fac_vars[1])>>=
 b <- list()
-
-for (var in fac_vars) {
-b[[var]] <- bwplot(df[[y]]~df[[var]]
-            , xlab = var
-            , ylab = y)
+if (any(y == fac_vars)) {
+  for (var in num_vars) {
+    b[[var]] <- bwplot(df[[var]]~df[[y]]
+                , xlab = y
+                , ylab = var)
+  }
 }
+for (var in fac_vars[fac_vars != y]) {
+  b[[var]] <- bwplot(df[[y]]~df[[var]]
+              , xlab = var
+              , ylab = y)
+}
+
 # knitr wants create a plot for each high level plot function call but I need to hold it for a better layout - plot in a seaparate chunk.
 @
 
 <<do_plotting, eval=!is.na(fac_vars[1]), fig.cap=paste("Boxplot of the dependent variable", y, "by each factor variable")>>=
 layouts <- list(
-  list()
+  list(c(0,0,1,1))
   , list(c(0, 0, 0.58, 1),c(0.51, 0, 1, 1))
   , list()
   , list(c(0,0,0.32,1), c(0.25,0,0.548,1), c(0.5,0,0.798,1), c(0.75,0,1,1))
@@ -20,16 +27,22 @@ layouts <- list(
 oneSideScale <- list(y = list(tck = c(1, 0)))
 silentScale <- list(y = list(draw = FALSE))
 
-n <- length(b)
-for (i in 1:n) {
-  print(
-    if (i == 1) { 
-      update(b[[i]], scales = oneSideScale)
-    } else {
-        update(b[[i]], scales = silentScale, ylab = NULL)
+if (length(b) > 0) {
+  q <- floor(length(b)/4)
+  e <- length(b)%%4
+  for (j in 1:(q+1)) {
+    n <- ifelse(j > q, e, 4)
+    for (i in 1:n) {
+      print(
+        if (i == 1) { 
+          update(b[[i  + (j-1) * 4]], scales = oneSideScale)
+        } else {
+            update(b[[i + (j-1) * 4]], scales = silentScale, ylab = NULL)
+        }
+      , pos = layouts[[n]][[i]]
+      , more = !(i == n)
+      )
     }
-  , pos = layouts[[n]][[i]]
-  , more = !(i == n)
-  )
+  }
 }
 @
