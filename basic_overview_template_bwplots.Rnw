@@ -1,18 +1,23 @@
 <<create_bwplot_objects, eval=!is.na(fac_vars[1])>>=
 b <- list()
-if (any(y == fac_vars)) {
+if (classification) {
   for (var in num_vars) {
     b[[var]] <- bwplot(df[[var]]~df[[y]]
                 , xlab = y
                 , ylab = var)
   }
+for (var in fac_vars[fac_vars != y]) {
+  print(var)
+  print(table(df[[var]], df[[y]]))
+  }
 }
+
+if (regression)
 for (var in fac_vars[fac_vars != y]) {
   b[[var]] <- bwplot(df[[y]]~df[[var]]
               , xlab = var
               , ylab = y)
 }
-
 # knitr wants create a plot for each high level plot function call but I need to hold it for a better layout - plot in a seaparate chunk.
 @
 
@@ -32,16 +37,18 @@ if (length(b) > 0) {
   e <- length(b)%%4
   for (j in 1:(q+1)) {
     n <- ifelse(j > q, e, 4)
-    for (i in 1:n) {
-      print(
-        if (i == 1) { 
-          update(b[[i  + (j-1) * 4]], scales = oneSideScale)
-        } else {
-            update(b[[i + (j-1) * 4]], scales = silentScale, ylab = NULL)
-        }
-      , pos = layouts[[n]][[i]]
-      , more = !(i == n)
-      )
+    if (n > 0) {
+      for (i in 1:n) {
+        print(
+          if (i == 1) { 
+            update(b[[i  + (j-1) * 4]], scales = oneSideScale)
+          } else {
+              update(b[[i + (j-1) * 4]], scales = silentScale, ylab = NULL)
+          }
+        , pos = layouts[[n]][[i]]
+        , more = !(i == n)
+        )
+      }
     }
   }
 }

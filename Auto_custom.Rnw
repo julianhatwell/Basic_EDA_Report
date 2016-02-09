@@ -1,0 +1,44 @@
+<<splom_custom, fig.cap='multi-variate comparisons'>>=
+# replace basic splom
+basic_corrgram <- FALSE
+
+# use original DF
+corrgram(Auto, order = FALSE
+        , lower.panel=panel.pie
+        , upper.panel=panel.ellipse
+        , text.panel=panel.txt
+        , dir = "right"
+        , main = paste("Correlogram of", ds)
+      )
+
+basic_lmfits <- FALSE
+
+# exclude the name column and use the non-factorised vars for EDA
+cols <- c("cylinders", "displacement"
+          , "horsepower" , "weight"
+          , "acceleration", "year"
+          , "origin", "mpg01")
+df1 <- data.frame(Auto, mpg01) %>% select(-mpg)
+cfs <- data.frame(row.names =  cols[cols != y & cols != "name"])
+for (var in cols[cols != y & cols != "name"]) {
+    fmla1 <- as.formula(paste0(y, "~", var))
+    lm.var <- glm(fmla1, data = df1, family = binomial)
+    cfs[var,1] <- lm.var$coefficients[2]
+    print(summary(lm.var))
+}
+
+fmla <- as.formula(paste0(y, "~", paste(cols[cols != y & cols != "name"], collapse = "+")))
+lm.vars <- glm(fmla, data = df1, family = binomial)
+#if (length(fac_vars[fac_vars != y]) == 0) {
+  cfs[,2] <- lm.vars$coefficients[2:(length(cols[cols!=y]) + 1)]
+  print(summary(lm.vars))
+  
+  xyplot(cfs$V1~cfs$V2, groups = row.names(cfs)
+         , cex = 1.1
+         , scales = list(tck = c(1, 0))
+         , auto.key = list(columns = 4)
+         , xlab = "Coefficient in single variable model"
+         , ylab = "Coefficient in multiple variable model"
+         , main = "Single vs Multivariate model parameters")
+#}
+@

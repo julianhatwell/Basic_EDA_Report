@@ -1,0 +1,11 @@
+<<tidy_data>>=
+mpg01 <- factor(ifelse(Auto$mpg > median(Auto$mpg), 1, 0))
+df <- Auto %>%
+  mutate(mpg01 = mpg01
+         , name = factor(name)
+         , origin = factor(origin)
+         , cylinders = factor(cylinders)
+         , year = factor(year)
+         ) %>%
+  select(-mpg)
+@

@@ -23,4 +23,7 @@ if (!is.na(fac_vars[1])) {
       length(levels(df[[fac_vars[i]]]))
   }
 }
+
+regression <- any(y == num_vars)
+classification <- (any(y == fac_vars))
 @
