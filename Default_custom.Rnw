@@ -1,0 +1,2 @@
+<<custom, fig.cap='multi-variate comparisons'>>=
+@

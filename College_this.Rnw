@@ -1,0 +1,10 @@
+<<this_data_set>>=
+# library/package
+lb <- "ISLR"
+
+# dataset
+ds <- "College"
+
+# determine the response variables
+y <- "Apps"
+@

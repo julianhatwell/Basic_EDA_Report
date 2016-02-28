@@ -1,0 +1,17 @@
+<<custom, fig.cap='multi-variate comparisons'>>=
+basic_bwplots <- FALSE
+basic_splom <- FALSE
+basic_corrgram <- FALSE
+@
+
+<<create_bwplot_custom>>=
+fac_vars <- "Private"
+b <- list()
+for (var in fac_vars[fac_vars != y]) {
+  b[[var]] <- bwplot(log(df[[y]])~df[[var]]
+              , xlab = var
+              , ylab = "Log(Apps)")
+}
+
+b[[var]]
+@

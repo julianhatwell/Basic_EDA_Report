@@ -1,0 +1,15 @@
+<<tidy_data>>=
+df <- College %>%
+  mutate(Log.Apps = log(Apps)
+         , Log.Accept = log(Apps)
+         , Log.Enroll = log(Enroll)
+         , Log.F.Undergrad = log(F.Undergrad)
+         , Log.P.Undergrad = log(P.Undergrad)
+         , Log.Expend = log(Expend)
+         , Outstate = Outstate/1000
+         , Room.Board = Room.Board/1000
+         , Books = Books/250
+         , Personal = Personal/250) %>%
+  select(-Accept, -Enroll, -F.Undergrad, -P.Undergrad, -Expend)
+
+@
