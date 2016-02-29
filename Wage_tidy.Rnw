@@ -1,0 +1,4 @@
+<<tidy_data>>=
+df <- Wage %>%
+  select(-sex, -region, -logwage)
+@

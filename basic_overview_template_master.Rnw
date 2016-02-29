@@ -1,5 +1,5 @@
 <<prologue, include=FALSE>>=
-specific_report <- "College"
+specific_report <- "Wage"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE
