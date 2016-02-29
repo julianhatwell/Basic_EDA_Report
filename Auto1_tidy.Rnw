@@ -1,0 +1,6 @@
+<<tidy_data>>=
+df <- Auto %>%
+  mutate(origin = factor(origin)
+         )  %>%
+  select(-name)
+@
