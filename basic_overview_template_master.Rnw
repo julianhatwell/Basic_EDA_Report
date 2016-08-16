@@ -32,8 +32,8 @@ Dataset from
 \maketitle
 
 This document provides a brief overview of the
-\Sexpr{ds} dataset in the 
-\Sexpr{lb} package.
+\Sexpr{ds} dataset 
+\Sexpr{libraryText}.
 
 <<data_summary>>=
 summary(df)
