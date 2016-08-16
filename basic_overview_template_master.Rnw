@@ -1,5 +1,5 @@
 <<prologue, include=FALSE>>=
-specific_report <- "Auto"
+specific_report <- "purchases"
 
 knitr::opts_chunk$set(warning = FALSE
                       , message = FALSE
@@ -10,6 +10,14 @@ knitr::opts_chunk$set(warning = FALSE
 <<dataset, child=paste0(specific_report, "_this.Rnw")>>=
 @
 
+<<library_check>>=
+libraryText <- if (is.na(lb)) {
+  "from local file"
+} else {
+  paste("from the R package", lb)
+}
+@
+
 <<setup, child='basic_overview_template_setup.Rnw'>>=
 @
 
@@ -18,20 +26,20 @@ knitr::opts_chunk$set(warning = FALSE
 \title{Overview of 
 \Sexpr{paste0("``",ds, "''")} 
 Dataset from 
-\Sexpr{paste0("``", lb, "''")}
-Package}
+\Sexpr{libraryText}
+}
 \author{Julian Hatwell}
 \maketitle
 
 This document provides a brief overview of the
 \Sexpr{ds} dataset in the 
-\Sexpr{lb} R package.
+\Sexpr{lb} package.
 
 <<data_summary>>=
 summary(df)
 @
 
-From the summary, and the associated help (not shown), the following observations can be made:
+From the summary:
 \newline
 
 The dataframe contains 

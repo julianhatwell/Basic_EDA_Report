@@ -10,8 +10,11 @@ library(tidyr)
 library(corrgram)
 
 # import the specified dataset
-library(lb, character.only = TRUE)
-df <- get(ds)
+if (!(is.na(lb))) {
+  library(lb, character.only = TRUE)
+  df <- get(ds)
+} else { 
+  df <- read.table(ds)}
 
 # customisation hooks
 basic_ts <- TRUE

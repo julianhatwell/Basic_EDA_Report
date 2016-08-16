@@ -1,0 +1,7 @@
+<<tidy_data>>=
+# Add headers and interpret the last column as a date, extract year of purchase
+colnames(df) = c('customerId', 'purchaseAmount', 'dateOfPurchase')
+df$customerId <- factor(df$customerId)
+df$dateOfPurchase = as.Date(df$dateOfPurchase, "%Y-%m-%d")
+df$yearOfPurchase = as.numeric(format(df$dateOfPurchase, "%Y"))
+@

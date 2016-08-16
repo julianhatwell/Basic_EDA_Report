@@ -1,0 +1,10 @@
+<<this_data_set>>=
+# library/package
+lb <- NA
+
+# dataset
+ds <- "purchases.txt"
+
+# determine the response variables
+y <- "V2"
+@
