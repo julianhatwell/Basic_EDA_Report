@@ -8,6 +8,7 @@ library(lattice)
 library(dplyr)
 library(tidyr)
 library(corrgram)
+library(car)
 
 # import the specified dataset
 if (!(is.na(lb))) {

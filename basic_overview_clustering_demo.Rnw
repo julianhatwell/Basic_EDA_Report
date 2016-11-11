@@ -1,0 +1,202 @@
+<<prologue, include=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE
+                      )
+knitr::opts_template$set(
+  fig.wide = list(fig.height = 4, fig.width = 7, fig.align='center'),
+  fig.norm = list(fig.height = 7, fig.width = 7, fig.align='center')
+)
+
+library(lattice)
+library(dplyr)
+library(tidyr)
+library(corrgram)
+library(car)
+library(ISLR)
+library(ape)
+@
+
+\documentclass{article}
+\begin{document}
+\title{A quick comparison of clustering algorithms}
+\author{Julian Hatwell}
+\maketitle
+
+\section{Introduction}
+
+Kmeans and Hierarchical Agglomarative clustering are two different approaches to descriptive classification analysis problems. They can be used to find clusters in an unsupervised context, where the classifications are not known and existing data cannot be used for training.
+
+If there is prior knowledge of the true cluster group memberships, this can be used to assess the accuracy of the clustering algorithm, or to measure how well the data fit the algorithm (there is a subtle difference).
+
+There is extensive literature about the two algorithms which is not repeated here.
+
+\section{Comparison of these two algorithms}
+
+\textbf{Kmeans}
+\begin{itemize}
+  \item Non-deterministic - results depend on randomly chosen start points, called "centroids"
+  \item Can only find ellipse shaped clusters
+  \item Requires the analyst to choose the number of clusters to be returned while there may not be any way to know this in advance. Results may be very different for different number of clusters
+  \item Fast and scalable
+\end{itemize}
+
+\textbf{Hierarchical Agglomerative Clustering}
+\begin{itemize}
+  \item Deterministic - results will be the same for each run
+  \item The single link algorithm may find irregualar shaped clusters
+  \item The algorithm returns all possible levels of clustering which can be visualised as a dendrogram (a tree-like structure)
+  \item Not scalable. Limited by the size of distance matrix that must be created
+\end{itemize}
+
+\newpage
+\section{The Iris Data}
+It's easy to illustrate Kmeans clustering with the Iris dataset which is inlcuded in base R. These data were collected by Edgar Anderson in 1935.
+
+<<Edgar, fig.align='center', fig.cap="A photo of Edgar Anderson">>=
+include_graphics("ANDERSON.jpg")
+@
+
+<<Iris, fig.align='center', out.height='185px', out.width='125px', fig.cap="Some lovely irises">>=
+include_graphics("iris.jpg")
+@
+
+\newpage
+
+Kmeans clustering is run on the Iris data. The value of K is set to 3 as there are known to be three species of Iris collected in the sample.
+
+<<KmeansIris, opts.label='fig.wide', fig.cap='plots of cluster assignments by pairs of variables with expected results and correct colour matching'>>=
+# kmeans
+set.seed(5)
+
+iris.n <- iris[, -5]
+iris.k3 <- kmeans(iris.n, centers=3)
+
+plot(iris$Sepal.Length, iris$Sepal.Width, col = iris.k3$cluster, cex = 0.25, pch = 19)
+points(iris$Sepal.Length, iris$Sepal.Width, col = iris$Species)
+points(iris.k3$centers[,1], iris.k3$centers[,2], pch = 15, col = 1:3, cex = 2)
+
+plot(iris$Petal.Length, iris$Petal.Width, col = iris.k3$cluster, cex = 0.25, pch = 19)
+points(iris$Petal.Length, iris$Petal.Width, col = iris$Species)
+points(iris.k3$centers[,3], iris.k3$centers[,4], pch = 15, col = 1:3, cex = 2)
+@
+
+For each point in the scatter plots, the outer ring is the true species class while the inner dot is a cluster assignment. The large square is the cluster centroid.
+\newline
+
+It can be seen that not every point has been assigned to the correct species or "true" cluster where the true clusters are not linearly separable. This margin of error is normal for any machine learning algorithm. The scale of error would help to judge the usefulness of an algorithm for a given type of problem. It can also be said that the data don't completely fit a clustering model based on linear separation by euclidean distance.
+\newline
+
+Also, note that care was taken to pick a random seed that assigned the clusters 1,2 and 3 in the same ordering as the data, which is sorted by species. This was done to make a colour match when plotting the two sets of points (filled and open circles). Kmeans is non-deterministic, so different runs with different start points can  result in different cluster ordering. 
+\newline
+
+Finally, a different run can produce very different results, depending on the location of the initial centroids. This can be seen in the second pair of scatter plots.
+\newline
+
+<<KmeansIris_wrong, opts.label='fig.wide', fig.cap='plots of cluster assignments with an alternative random seed and poorly performing results'>>=
+# kmeans
+set.seed(2016)
+
+iris.n <- iris[, -5]
+iris.k3 <- kmeans(iris.n, centers=3)
+
+plot(iris$Sepal.Length, iris$Sepal.Width, col = iris.k3$cluster, cex = 0.25, pch = 19)
+points(iris$Sepal.Length, iris$Sepal.Width, col = iris$Species)
+points(iris.k3$centers[,1], iris.k3$centers[,2], pch = 15, col = 1:3, cex = 2)
+
+plot(iris$Petal.Length, iris$Petal.Width, col = iris.k3$cluster, cex = 0.25, pch = 19)
+points(iris$Petal.Length, iris$Petal.Width, col = iris$Species)
+points(iris.k3$centers[,3], iris.k3$centers[,4], pch = 15, col = 1:3, cex = 2)
+@
+
+\newpage
+\section{Kmeans and Hiearchical Clustering over the Cushing Data}
+
+The following section was created in collaboration with my study group as a practice for the module assignment. 
+\newline
+
+We will compare kmeans and hclust on the Cushings dataset in the MASS package. This set has two numeric variables and one classification variable. The classification variable will be removed before clustering.
+
+<<quick_summary, echo=TRUE, opts.label='fig.wide'>>=
+library(MASS)
+# basic checks
+summary(Cushings)
+head(Cushings)
+cush <- Cushings[, -3]
+
+# univariate plots
+hist(cush$Tetrahydrocortisone)
+hist(cush$Pregnanetriol)
+
+# scatter plot
+plot(cush$Tetrahydrocortisone, cush$Pregnanetriol)
+@
+
+Immediately we can see a problem because the data are not well separated. The high skew on both variables means that most of the data is bunched up together near the origin. This can be addressed with a log transform of the data on both variables.
+\newline
+
+<<log_cush, echo=TRUE, opts.label='fig.wide'>>=
+cush <- as.data.frame(sapply(cush, log))
+
+# univariate plots
+hist(cush$Tetrahydrocortisone)
+hist(cush$Pregnanetriol)
+
+# scatter plot
+plot(cush$Tetrahydrocortisone, cush$Pregnanetriol)
+@
+
+The following graphs show the true classes and cluster assignments by kmeans. We can see that the algorithm does not perform well with this data. This plot suggests that the relationships among the data are more complex than can be determined with kmeans.
+
+<<do_km_clusters, opts.label='fig.wide'>>=
+set.seed(13)
+# kmeans
+cush.cluster1 = kmeans(cush, centers = 4, nstart = 10)
+clusAssign <- cush.cluster1$cluster
+clusAssign <- ifelse(clusAssign == 1, 5, clusAssign)
+clusAssign <- ifelse(clusAssign == 2, 1, clusAssign)
+clusAssign <- ifelse(clusAssign == 5, 2, clusAssign)
+plot(cush, col = Cushings$Type, main = "log Transformed Cushings data, true classes")
+plot(cush, col = clusAssign, main = "log Transformed Cushings data, cluster assignments")
+@
+
+Next, 4 types of hierarchical clustering are performed and the resulting dendrograms displayed with the hierarchical clusters highlighted at the level of 4 and the true class labels are colour coded to highlight similarity/dissimilarity to the clustering assignments.
+\newline
+
+Of the 4 methods tried, "average" appears to have given the best results using this visual inspection technique. Two of the four classes have been quite well separated but overall it's still not a very close alignment to the true classes.
+\newline
+
+In this case, hclust has also not performed very well. This is probably a very challenging data set for the various algorithms. The sample is rather small and the true cases are not at all close to being linearly separable. In a real life scenario, it may be that clustering uncovers a previously unknown pattern in the data and the cluster assigment forms the basis of further investigation.
+
+<<do_hclust, opts.label='fig.wide'>>=
+hclusPlot <- function(x) {
+  cushColors <- c("#CDB380", "#036564", "#EB6841", "#EDC951")
+  clus <- cutree(x, 4)
+  labelColours <- cushColors[Cushings$Type]
+
+  # phylogenic tree plot
+    plot(as.phylo(x)
+       , direction = "downwards"
+       , tip.color = labelColours
+       , main = x$method)
+    rect.hclust(x, k=4, border = "red")
+}
+
+cush.hclus1 = hclust(dist(cush),method="centroid")
+cush.hclus2 = hclust(dist(cush),method="average")
+cush.hclus3 = hclust(dist(cush),method="complete")
+cush.hclus4 = hclust(dist(cush),method="single")
+
+hclusPlot(cush.hclus1)
+hclusPlot(cush.hclus2)
+hclusPlot(cush.hclus3)
+hclusPlot(cush.hclus4)
+@
+
+\section{Conclusion}
+
+Clustering is especially useful for unsupervised classification problems where any true groupings or patterns in the data may not be known in advance. There are many techniques for clustering, but two which are considered classical or tried and tested are Kmeans and Hierarchical Agglomerative clustering.
+
+Each algorithm has advantages and disadvantages or limitations. It is up to the analyst to determine the which algorithm works best through a methodical analysis of the problem on a case by case basis.
+
+\end{document}

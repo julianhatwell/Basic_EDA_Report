@@ -1,0 +1,162 @@
+<<prologue, include=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE
+                      )
+knitr::opts_template$set(
+  fig.wide = list(fig.height = 4, fig.width = 7, fig.align='center'),
+  fig.norm = list(fig.height = 7, fig.width = 7, fig.align='center')
+)
+
+library(e1071)
+library(ISLR)
+@
+
+\documentclass{article}
+\usepackage{mathtools}
+\newcommand{\argmax}{\arg\!\max}
+\begin{document}
+\title{A quick overview of Naive Bayes Classification}
+\author{Julian Hatwell}
+\maketitle
+
+\section{Introduction}
+
+Naive Bayes is a simple classification technique that is often used as a baseline in classification projects. A new classifier should always perform better than Naive Bayes to be worthy of further investigation.
+\newline
+
+Naive Bayes uses Bayes formula to calculate the conditional probabilities of given data resulting in the class attribution, and simply selects the most probable class as its prediction.
+\newline
+
+Bayes formula expresses classification problems as a simple probability calculation like this:
+
+$$ P(A \mid B) = \frac{P(B \mid A) \, P(A)}{P(B)} $$
+
+In classification problems, the left hand side of the equation is unknown. The formula states that (left hand side) the probability of event A, given data B is equal to (right hand side) the probability of data B given event A, multiplied by the probability of event A, divided by the probability of data B.
+\newline
+
+This is a simple and elegant solution to classification because all the information on the rhs can be very easily calcuated from the available data. It is rendered even simpler because the denomenator on the rhs is the same for all classes, and so doesn't need to be calculated at all.
+\newline
+
+The practical calculation for a Naive Bayes model then is:
+
+$$ \hat{y} = \underset{k \in \{1, \dots, K\}}{\argmax} P(C_k) \prod_{i=1}^n P(x_i \mid C_k) $$
+
+However, Naive Bayes has some problems in real world applications because it assumes that all the attributes (or independent variables) are independent and uncorrelated with each other. This usually isn't true.
+\newline
+
+Another problem is that Naive Bayes will not ever predict a class for instances where any one attribute has never been associated with that Class. This is because a single zero value in the product calcution results in a zero probability. This is true no matter how high the probability contributed by all the other attributes.
+\newline
+
+This problem can be solved by Laplace Normalisation. This method works by adding 1 to the numerator and denomenator of all the probabilities expressed as fractions. However, the probabilities are no longer accurate and this can affect the accuracy of the whole algorithm.
+\newline
+
+Despite these limitations, Naive Bayes performs surprisingly well in a number of special cases and, as mentioned previously, it is good enough to act as a baseline allowing researchers to quickly discard ineffective models.
+
+\section{Naive Bayes Classification of the Iris Data}
+
+The (now familiar) Edgar Anderson's Iris data will now be used as a practical example of using Naive Bayes in R. The e1071 package has already been loaded.
+
+<<nbIris, echo=TRUE>>=
+set.seed(500) # ensure consistent results
+
+# this section shows the effect of different sizes of training data
+
+# create test indices for different sizes of training and test splits
+train.indices <- list()
+splits <- c(0.6, 0.8, 0.9)
+for(i in seq_along(splits)) {
+  train.indices[[as.character(splits[i])]] <- 
+    sample(nrow(iris)
+        , size = round(splits[i] * nrow(iris)))
+}
+
+# split the data into training and test sets using each size  
+iris.train60 <- iris[train.indices$`0.6`, ]
+iris.test60 <- iris[-train.indices$`0.6`, ]
+
+iris.train80 <- iris[train.indices$`0.8`, ]
+iris.test80 <- iris[-train.indices$`0.8`, ]
+
+iris.train90 <- iris[train.indices$`0.9`, ]
+iris.test90 <- iris[-train.indices$`0.9`, ]
+
+# train
+NB60 <- naiveBayes(iris.train60[, 1:4]
+                   , iris.train60[, 5])
+
+NB80 <- naiveBayes(iris.train80[, 1:4]
+                   , iris.train80[, 5])
+
+NB90 <- naiveBayes(iris.train90[, 1:4]
+                   , iris.train90[, 5])
+
+# predict
+results60 <- table(pred = predict(NB60, iris.test60)
+                   , actual = iris.test60$Species)
+
+results80 <- table(pred = predict(NB80, iris.test80)
+                   , actual = iris.test80$Species)
+
+results90 <- table(pred = predict(NB90, iris.test90)
+                   , actual = iris.test90$Species)
+@
+
+The results are tabulated into a confusion matrix. A simple measure of accuracy is the number of correct predictions (along the diagonal of the matrix) divided by the total number of test instances. This is also easy to calculate in R.
+
+<<nbIris_results, echo=TRUE>>=
+# 60% training set results
+results60
+
+# 60% training set results accuracy
+sum(diag(results60))/sum(results60)
+
+# 80% training set results
+results80
+
+# 80% training set results accuracy
+sum(diag(results80))/sum(results80)
+
+# 90% training set results
+results90
+
+# 90% training set results accuracy
+sum(diag(results90))/sum(results90)
+@
+
+The accuracy measure steadily increases as more of the data is used in training. This is expected as the model becomes more and more representative of the dataset. This phenomenon can lead to overfitting, where the model is able to predict extremely well on the training data but poorly on new data.
+
+\section{Naive Bayes Classification of Stock Market Data}
+
+Now a Naive Bayes classification exercise will be performed on the Stock Market data from the ISLR package. A 70/30 split will be used for training and test.
+
+<<nbSmarket, echo=TRUE>>=
+set.seed(500) # ensure consistent results
+
+# split data into training and test
+train <- sample(nrow(Smarket)
+        , size = round(0.7 * nrow(Smarket)))
+
+sm.train <- Smarket[train, ]
+sm.test <- Smarket[-train, ]
+
+# train
+nb.sm <- naiveBayes(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume, sm.train)
+
+# predict
+sm.results <- table(pred = predict(nb.sm, sm.test)
+                   , actual = sm.test$Direction)
+
+sm.results
+
+sum(diag(sm.results))/sum(sm.results)
+@
+
+In this case, Naive Bayes performs extremely poorly at classification. It is correct less than 50\% of the time which is worse than a random guess. This might be because all of its assumptions are violated. This market data contains time series which are highly correlated between and within the dependent variables.
+
+\section{Conclusion}
+This report has described the Naive Bayes classifier and its uses and limitations. A demonstration with the Iris data showed how it can perform well in specific cases and hinted at the problem of over-fitting when training any prediction model. A further example of Naive Bayes revealed its limitations for real world applications.
+\newline
+
+This concludes the overview of Naive Bayes classification. 
+\end{document}
