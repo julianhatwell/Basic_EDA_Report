@@ -1,0 +1,142 @@
+<<prologue, include=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE
+                      )
+knitr::opts_template$set(
+  fig.wide = list(fig.height = 4, fig.width = 7),
+  fig.norm = list(fig.height = 7, fig.width = 7)
+)
+
+library(lattice)
+library(dplyr)
+library(tidyr)
+library(corrgram)
+library(car)
+library(ISLR)
+@
+
+\documentclass{article}
+\begin{document}
+\title{Overview of the Auto dataset from the ISLR package}
+\author{Julian Hatwell}
+\maketitle
+
+This document provides a brief overview of the Auto dataset from the ISLR package. It serves as a demonstration of some of useful techniques for quickly exploring and getting to know a data set before more in depth work begins.
+\newline
+\newline
+As a first look at the data, the summary() function is called on the dataset.
+
+<<data_summary>>=
+summary(Auto)
+@
+
+Using the nrow() and ncol() commands shows that the dataframe contains 
+\Sexpr{nrow(Auto)} 
+rows and 
+\Sexpr{ncol(Auto)}
+columns. 
+
+\newpage
+
+Next, a few rows are sampled at random using car::some(). This is an alternative to using the base R head() function which always shows the top n rows. Showing the top n rows can be misleading on datasets that have any kind of ordering which would lead to the first few rows not being a representative sample.
+
+<<some_rows>>=
+some(Auto)
+@
+
+Before going any further, the dplyr library is used to recode some of the columns as factors so that R will handle them appropriately when plotting. The mpg variable is a common sense choice for response variable.
+
+<<tidy_data, echo=TRUE>>=
+df <- Auto %>%
+  mutate(name = factor(name)
+         , origin = factor(origin)
+         , cylinders = factor(cylinders)
+         , year = factor(year)
+         )
+y <- "mpg"
+@
+
+\newpage
+
+A correlogram is a very useful plot. It reveals the level of correlation between all the numeric variables by using a pairwise comparison. It is highly configurable allowing different graphics such as pies and ellipses (as shown) to be presented in the upper an lower triangles. Colour coding gives an indication of positive and negative correlation.
+
+<<corr_plot>>=
+corrgram(Auto, order = FALSE
+        , lower.panel=panel.pie
+        , upper.panel=panel.ellipse
+        , text.panel=panel.txt
+        , dir = "right"
+        , main = "Correlogram of Auto dataset"
+      )
+@
+
+\newpage
+
+Now density plots are produced for all the numeric variables. Density plots provide the same information as a histogram but produce a smooth curve rather than steps/bars.
+
+<<enum_cols>>=
+cols <- colnames(df)
+cols <- cols[cols != "name"]
+n <- length(cols)
+coltype <- character(n)
+for (i in 1:n) {
+  if (is.numeric(df[[cols[i]]]) & 
+      class(df[[cols[i]]]) != "ts") {
+    coltype[i] <- "numeric"
+  } else {
+      coltype[i] <- class(df[[cols[i]]])
+  }
+}
+
+# other variables
+num_vars <- cols[coltype == "numeric"]
+fac_vars <- cols[coltype == "factor"]
+ts_vars <- cols[coltype == "ts"]
+if (!is.na(fac_vars[1])) {
+  m <- length(fac_vars)
+  fac_levs <- integer(m)
+  for (i in 1:m) {
+    fac_levs[i] <- 
+      length(levels(df[[fac_vars[i]]]))
+  }
+}
+
+@
+
+
+<<density, opts.label='fig.wide'>>=
+for (var in num_vars) {
+d <- densityplot(~df[[var]], breaks=15, xlab = var)
+print(d)
+}
+@
+
+\newpage
+
+Box and whisker plots are produced for the response variable (mpg) against each of the factor variables, excluding name which is unique for each row. This is a useful technique as it shows how the response variable is distributed differently over the levels of a factor. The box and whisker plot highlights the median (central point), the interquatile range, the reasonable full range and any outliers.
+
+<<bwplots, opts.label='fig.wide'>>=
+for (var in fac_vars[fac_vars != y]) {
+  b <- bwplot(df[[y]]~df[[var]]
+            , xlab = var
+            , ylab = y)
+  print(b)
+  }
+@
+
+\newpage
+
+Finally, a scatterplot matrix shows comparisons between all numeric variables in a pairwise fashion. This is incredibly useful for finding patterns early on in the exploratory analysis.
+
+<<splom, opts.label='fig.norm'>>=
+splom(~df
+      , pscales = 0
+      , alpha = 0.5 
+      , type = c("p","smooth")
+      , main = "Scatter Plot Matrix of Auto dataset")
+@
+
+This concludes the demonstration of some of the techniques for quickly exploring and getting to know a data set.
+
+\end{document}

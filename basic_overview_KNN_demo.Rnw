@@ -1,0 +1,106 @@
+<<prologue, include=FALSE>>=
+knitr::opts_chunk$set(warning = FALSE
+                      , message = FALSE
+                      , echo = FALSE
+                      )
+knitr::opts_template$set(
+  fig.wide = list(fig.height = 4, fig.width = 7, fig.align='center'),
+  fig.norm = list(fig.height = 7, fig.width = 7, fig.align='center')
+)
+library(class)
+library(xtable)
+library(lattice)
+source("c:\\Dev\\Study\\R\\R_Themes\\BluesGreysTheme.R")
+@
+
+\documentclass{article}
+\begin{document}
+\title{A quick overview of K-Nearest Neighbours Classification}
+\author{Julian Hatwell}
+\maketitle
+
+\section{Introduction}
+
+The K-Nearest Neighbours (KNN) classification algorithm is one of the easiest algorithms to understand intuitively. To predict the classification of a new data point, the k nearest neighbours from the training data set are discovered using a distance measure, such as Euclidean distance. The class is assigned according to a majority vote among the classes of these neighbouring points.
+
+\section{Model Parameters}
+
+KNN several parameters, the most important of which is k, the number of neighbours to consider. Other parameters include be the minimum number of votes and the distance measure used. However, it is the appropriate selection of k that has the most consequence for the classification accuracy.
+\newline
+
+The exact size of k will depend on the training data. If too small, the model will potentially over fit the data. If too large, the classifier will be biased (it is too crude and inaccurate). Selecting the best value for k should be done by creating multiple models and testing their accuracy using cross validation.
+
+\section{Demonstration}
+
+In the following example, the Iris data has its class labels removed and replaced with new labels discovered by K-Means clustering. Different numbers of centroids are used to create datasets that differ from the original, $ K \in \{ 2, \dots, 8 \}$. This is purely for demonstration purposes.
+\newline
+
+These new datasets are then used to train models with $ k  \in \{ 1, \dots, 5  \} * 2 - 1 $ and the accuracy of each model prediction is checked against a hold-out (test) set. Note that in this demo, cross-validation is not used.
+\newline
+
+The code has been implemented as a nested loop. Please see the Appendix.
+
+<<challenge_code>>=
+# split data into training and test
+set.seed(1004)
+iris.clean <- iris[,-5]
+index <- sample(1:nrow(iris.clean)
+                , round(0.7 * nrow(iris.clean)))
+train <- iris.clean[index, ]
+test <- iris.clean[-index, ]
+
+# set up constants and containers
+kmns <- 2:10
+knns <- c(1,3,5,7,9)
+iris.km <- list()
+iris.knn <- list()
+accuracy <- matrix(ncol = length(knns)
+                   , nrow = length(kmns)
+                   , dimnames = list(classes = as.character(kmns)
+                                     , neighbours = as.character(knns)))
+
+# run loops
+for (i in kmns) {
+  km <- kmeans(iris.clean, centers = i)
+  iris.km[[i]] <- as.factor(km$cluster)
+  iris.knn[[i]] <- list()
+  for (j in knns) {
+    iris.knn[[i]][[j]] <- knn(train
+                              , test
+                              , iris.km[[i]][index]
+                              , k = j)
+    iris.knn[[i]][[j + 1]] <- iris.knn[[i]][[j]] == iris.km[[i]][-index]
+    accuracy[as.character(i), as.character(j)] <- 
+      sum(iris.knn[[i]][[j + 1]])/length(iris.knn[[i]][[j + 1]])
+  }
+}
+@
+
+The resulting accuracy table is presented below.
+
+<<accuracy, results='asis', opts.label='fig.wide'>>=
+xtable(accuracy)
+levelplot(t(accuracy[order(rev(kmns)), ])
+          , xlab = "k (number of nearest neighbours)"
+          , ylab = "Number of Classes"
+          , par.settings = MyLatticeTheme
+          , scales = MyLatticeScale
+          , aspect = 0.9
+          )
+@
+
+The levelplot has been added to make the results easier to read. It is easy to see that the set with 3 classes yielded 100\% accurate predictions for the models with $k \in \{1, 3, 5 \}$. It was the easiest to classify accurately because it best mirrors the underlying data. 
+\newline
+
+Models with $k \in \{ 7, 9 \}$ dropped in accuracy because so many points are involved in the classification that the probability of including non-similar points is very high. Similar problems occur when there are too many classes. Finding correctly classed near neighbours becomes more unlikely.
+\newline
+
+This concludes the demonstration of K-Nearest Neighbours.
+
+\newpage
+
+\section{Appendix - Nested loops in R}
+<<challenge_code, eval=FALSE, echo=TRUE>>=
+@
+
+\end{document}

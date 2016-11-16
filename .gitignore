@@ -2,6 +2,11 @@
 .Rhistory
 .RData
 *.pdf
+*.log
+*.gz
+*.png
+*.jpg
+*.html
 purchases.txt
 *.tex
 /figure
